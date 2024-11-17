@@ -22,19 +22,19 @@ const chart = new Chart(
 );  
 
 const input = document.getElementById('file');
-input.addEventListener('input', event => {
+input.addEventListener('change', event => {
     event.preventDefault();
     const length = input.files.length;
     
     if (length < 1) {
-        console.log('no file');
+        console.warn('no file');
         return;
     }
     
     chart.data.datasets = [];
-
+    
     const lastIndex = length - 1;
-    Object.keys(input.files).forEach(index => {
+    Object.keys(input.files).forEach(index => {        
         const file = input.files[index];
 
         const reader = new FileReader();
