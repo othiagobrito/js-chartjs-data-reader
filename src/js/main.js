@@ -1,15 +1,6 @@
-const data = {
-    datasets: [
-        {
-            label: 'Data',
-            data: [],
-        },
-    ],
-};
-
 const config = {
     type: 'bar',
-    data: data,
+    data: {},
     options: {
       scales: {
         x: {
@@ -33,26 +24,36 @@ const chart = new Chart(
 const input = document.getElementById('file');
 input.addEventListener('input', event => {
     event.preventDefault();
-
-    const file = input.files[0];
-
-    if (! file) {
+    const length = input.files.length;
+    
+    if (length < 1) {
         console.log('no file');
         return;
     }
     
-    const reader = new FileReader();
-    reader.readAsText(file, 'UTF-8');
+    chart.data.datasets = [];
 
-    reader.onload = function (event) {
-        const data = JSON.parse(event.target.result);
+    const lastIndex = length - 1;
+    Object.keys(input.files).forEach(index => {
+        const file = input.files[index];
 
-        chart.data.datasets[0].data = Object.values(data);
-        chart.data.labels = Object.keys(data);
-        chart.update();
-    }
+        const reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+    
+        reader.onload = function (event) {
+            const data = JSON.parse(event.target.result);
 
-    reader.onerror = function (event) {
-        console.error(event);
-    }
+            chart.data.datasets.push({
+                label: file.name,
+                data: Object.values(data),
+            });
+
+            chart.data.labels = Object.keys(data);
+            if ( index == lastIndex ) chart.update();
+        }
+        
+        reader.onerror = function (event) {
+            console.error(event);
+        }
+    });
 });
